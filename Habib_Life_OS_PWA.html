@@ -1,0 +1,38 @@
+
+<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Habib Life OS</title>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0b1220;color:#fff}
+.header{padding:20px;background:linear-gradient(135deg,#2563eb,#06b6d4)}
+.container{padding:15px}
+.card{background:#182235;border-radius:18px;padding:15px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{background:#2563eb;color:#fff;border:none;border-radius:12px;padding:10px;width:100%}
+.progress{height:10px;background:#334155;border-radius:8px;overflow:hidden}
+.bar{height:100%;background:#22c55e}
+.stat{font-size:28px;font-weight:bold}
+select{width:100%;padding:10px;border-radius:10px}
+</style></head><body>
+<div class='header'><h2>Habib Life OS</h2><div id='score'>امتیاز امروز: 0</div></div>
+<div class='container'>
+<div class='card'><div class='stat' id='percent'>0%</div><div>پیشرفت کلی</div></div>
+<div class='card'><h3>ثبت فعالیت</h3>
+<select id='habit'>
+<option>آلمانی</option><option>انگلیسی</option><option>ورزش خانگی</option><option>فوتسال</option><option>باشگاه</option><option>اکسل و MEAL</option><option>مطالعه</option><option>خانواده</option>
+</select><br><br><button onclick='add()'>ثبت انجام شد ✅</button></div>
+<div class='card'><h3>آمار هفتگی</h3><div id='stats'></div></div>
+<div class='grid'>
+<div class='card'><h4>⚽ فوتسال</h4><div id='futsal'>0</div></div>
+<div class='card'><h4>🏋️ باشگاه</h4><div id='gym'>0</div></div>
+</div>
+<div class='card'><button onclick='backup()'>دانلود بکاپ JSON</button></div>
+</div>
+<script>
+const goals={'آلمانی':6,'انگلیسی':6,'ورزش خانگی':4,'فوتسال':2,'باشگاه':2,'اکسل و MEAL':3,'مطالعه':5,'خانواده':6};
+let data=JSON.parse(localStorage.getItem('habibLifeOS')||'{}');
+Object.keys(goals).forEach(k=>{if(!data[k])data[k]=0});
+function save(){localStorage.setItem('habibLifeOS',JSON.stringify(data));render();}
+function add(){data[habit.value]++;save();}
+function render(){let html='';let done=0,total=0;Object.keys(goals).forEach(k=>{let p=Math.min(100,Math.round((data[k]/goals[k])*100));done+=Math.min(data[k],goals[k]);total+=goals[k];html+=`<b>${k}</b> (${data[k]}/${goals[k]})<div class='progress'><div class='bar' style='width:${p}%'></div></div><br>`});document.getElementById('stats').innerHTML=html;let all=Math.round(done/total*100);document.getElementById('percent').innerText=all+'%';document.getElementById('score').innerText='امتیاز هفته: '+done;document.getElementById('futsal').innerText=data['فوتسال'];document.getElementById('gym').innerText=data['باشگاه'];}
+function backup(){let b=new Blob([JSON.stringify(data)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='HabibLifeBackup.json';a.click();}
+render();
+</script></body></html>
